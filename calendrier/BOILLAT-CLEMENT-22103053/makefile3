@@ -1,0 +1,35 @@
+CC = gcc
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
+LDLIBS = -lm
+RM = rm -f
+OBJ = testtrieurcalendrier.o trieurcalendrier.o calendrier.o evenement.o date.o 
+EXE = testtrieurcalendrier
+
+# Règle par défaut
+$(EXE): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE) $(LDLIBS)
+
+#Règle pour générer date.o à partir de date.c
+date.o: date.c date.h
+	$(CC) $(CFLAGS) -c date.c
+
+# Règle pour générer evenement.o à partir de evenement.c
+evenement.o: evenement.c evenement.h
+	$(CC) $(CFLAGS) -c evenement.c
+
+#Règle pour générer calendrier.o à partir de calendrier.c
+calendrier.o: calendrier.c calendrier.h
+	$(CC) $(CFLAGS) -c calendrier.c
+
+trieurcalendrier.o: trieurcalendrier.h trieurcalendrier.c
+		$(CC) $(CFLAGS) -c trieurcalendrier.c
+
+# Règles de compilation
+testtrieurcalendrier.o: testtrieurcalendrier.c trieurcalendrier.h calendrier.h evenement.h date.h 
+	$(CC) $(CFLAGS) -c testtrieurcalendrier.c
+
+
+
+# Règle de nettoyage
+clean:
+	$(RM) $(OBJ) $(EXE)

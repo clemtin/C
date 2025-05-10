@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.py": "python",
+        "standards.h": "c",
+        "queue": "c",
+        "stack": "c"
+    }
+}

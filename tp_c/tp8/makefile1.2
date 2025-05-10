@@ -1,0 +1,28 @@
+CC = gcc
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
+LDLIBS = -lm
+RM = rm -f
+OBJ = matrice.o tp8ex2.o image.o
+
+EXE = tp8ex2
+
+
+# Règle par défaut pour construire l'exécutable
+$(EXE): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE) $(LDLIBS)
+
+# Règle pour générer matrice.o à partir de matrice.c
+matrice.o: matrice.c matrice.h
+	$(CC) $(CFLAGS) -c matrice.c
+
+# Règle pour générer image.o à partir de image.c
+image.o: image.c image.h matrice.h
+	$(CC) $(CFLAGS) -c image.c
+
+# Règle pour générer tp8ex2.o à partir de tp8ex2.c
+tp8ex2.o: tp8ex2.c matrice.h image.h
+	$(CC) $(CFLAGS) -c tp8ex2.c
+
+# Règle pour nettoyer les fichiers objets et l'exécutable
+clean:
+	$(RM) $(OBJ) $(EXE)

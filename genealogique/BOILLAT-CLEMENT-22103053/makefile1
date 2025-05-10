@@ -1,0 +1,27 @@
+#makefile
+
+CC = gcc
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
+LDLIBS = -lm
+RM = rm -f
+OBJ = identite.o testidentite.o
+EXE = testidentite
+
+
+# Règle par défaut pour construire l'exécutable
+$(EXE): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE) $(LDLIBS)
+
+
+
+# Règle pour générer identite.o à partir de identite.c
+identite.o: identite.c identite.h
+	$(CC) $(CFLAGS) -c identite.c
+
+# Règle pour générer testidentite.o à partir de testidentite.c
+testidentite.o: testidentite.c identite.h
+	$(CC) $(CFLAGS) -c testidentite.c
+
+# Règle pour nettoyer les fichiers objets et l'exécutable
+clean:
+	$(RM) $(OBJ) $(EXE)

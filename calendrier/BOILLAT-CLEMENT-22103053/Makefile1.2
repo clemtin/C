@@ -1,0 +1,26 @@
+CC = gcc
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
+LDLIBS = -lm
+RM = rm -f
+OBJ = evenement.o testevenement.o date.o
+EXE = testevenement
+
+# Règle par défaut pour construire l'exécutable
+$(EXE): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE) $(LDLIBS)
+
+# Règle pour générer evenement.o à partir de evenement.c
+evenement.o: evenement.c evenement.h
+	$(CC) $(CFLAGS) -c evenement.c
+
+ #Règle pour générer date.o à partir de date.c
+date.o: date.c date.h
+	$(CC) $(CFLAGS) -c date.c
+
+# Règle pour générer testevenement.o à partir de testevenement.c
+testevenement.o: testevenement.c evenement.h date.h
+	$(CC) $(CFLAGS) -c testevenement.c
+
+# Règle pour nettoyer les fichiers objets et l'exécutable
+clean:
+	$(RM) $(OBJ) $(EXE)

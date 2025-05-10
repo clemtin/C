@@ -1,0 +1,22 @@
+CC = gcc
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
+LDLIBS = -lm
+RM = rm -f
+OBJ = date.o testdate.o
+EXE = testdate
+
+# Règle par défaut pour construire l'exécutable
+$(EXE): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE) $(LDLIBS)
+
+    #Règle pour générer date.o à partir de date.c
+date.o: date.c date.h
+	$(CC) $(CFLAGS) -c date.c
+
+# Règle pour générer testdate.o à partir de testdate.c
+testdate.o: testdate.c date.h
+	$(CC) $(CFLAGS) -c testdate.c
+
+# Règle pour nettoyer les fichiers objets et l'exécutable
+clean:
+	$(RM) $(OBJ) $(EXE)
