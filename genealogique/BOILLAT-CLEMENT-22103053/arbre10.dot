@@ -1,0 +1,18 @@
+digraph {
+	rankdir = "BT";
+
+	node [shape = box, fontname = "Arial", fontsize = 10];
+
+	edge [dir = none];
+
+	node [color = blue];
+	122 [label="DUBOURG\nPierre\n15/12/1910", shape=box];
+	122 -> 18;
+
+	node [color = blue];
+	18 [label="DUBOURG\nJean\n21/07/1866", shape=box];
+	122 -> 19;
+
+	node [color = green];
+	19 [label="COURBIN\nMarthe\n22/04/1872", shape=box];
+}

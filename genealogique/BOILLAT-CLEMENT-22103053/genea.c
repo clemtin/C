@@ -1,4 +1,4 @@
-#include <genea.h>
+#include "genea.h"
 
     // Arbre géné alogique
 struct sArbre{
@@ -230,7 +230,9 @@ void ArbreEcrireGV(tArbre Arbre, char Fichier[]) {
     printf("Le fichier DOT a ete genere avec succes : %s\n", Fichier);
 }
 
-void AfficherAscendantsRecursive(tArbre Arbre, struct sFiche *personne, int niveau) {
+
+//fonction auxiliere a ArbreAfficherAscendants
+static void AfficherAscendantsRecursive(tArbre Arbre, struct sFiche *personne, int niveau) {
     // Afficher l'identité de la personne
     IdentiteAfficher(personne->Identite);
 
@@ -278,8 +280,8 @@ void ArbreAfficherAscendants(tArbre Arbre, int Identifiant) {
     // Appeler la fonction récursive avec le niveau initial 0
     AfficherAscendantsRecursive(Arbre, personne, 0);
 }
-
-void EcrireAscendantsGVRecursive(FILE *f, tArbre Arbre, struct sFiche *personne) {
+//fonction auxiliaire 
+static void EcrireAscendantsGVRecursive(FILE *f, tArbre Arbre, struct sFiche *personne) {
 
     if (IdentiteSexe(personne->Identite)=='M'){
         fprintf(f, "\n\tnode [color = blue];\n");

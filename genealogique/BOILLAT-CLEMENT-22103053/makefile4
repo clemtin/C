@@ -1,28 +1,27 @@
 # Makefile
 
-# Définition des fichiers sources
-SRCS = visuarbreasc.c identite.c genea.c
-
-# Définition des fichiers objets
-OBJS = $(SRCS:.c=.o)
-
-# Définition du compilateur
 CC = gcc
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
+LDLIBS = -lm
+RM = rm -f
+OBJ = visuarbreasc.o identite.o genea.o
+EXE = visuarbreasc
 
-# Définition des options de compilation
-CFLAGS = -Wpedantic -Wall -Wextra
 
-# Nom de l'exécutable
-TARGET = visuarbreasc
+# Règle par défaut pour construire l'exécutable
+$(EXE): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE) $(LDLIBS)
 
-# Règle de construction de l'exécutable
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+# Règle pour générer identite.o à partir de identite.c
+identite.o: identite.c identite.h
+	$(CC) $(CFLAGS) -c identite.c
 
-# Règle de construction des fichiers objets (.o)
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+genea.o: genea.c genea.h identite.h
+	$(CC) $(CFLAGS) -c genea.c
+
+visuarbreasc.o: visuarbreasc.c genea.h identite.h
+	$(CC) $(CFLAGS) -c visuarbreasc.c
 
 # Règle pour nettoyer les fichiers objets et l'exécutable
 clean:
-	-rm -f $(OBJS) $(TARGET)
+	$(RM) $(OBJ) $(EXE)
