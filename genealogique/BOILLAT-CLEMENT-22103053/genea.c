@@ -2,12 +2,12 @@
 
     // Arbre géné alogique
 struct sArbre{
-    struct sFiche * pPremiere ; // Adresse de la premi ère fiche
-    struct sFiche * pDerniere ; // Adresse de la derni ère fiche
+    struct sFiche * pPremiere ; // Adresse de la première fiche
+    struct sFiche * pDerniere ; // Adresse de la dernière fiche
         };
 
 
-        // Fiche associ ée à chaque individu pré sent dans l’arbre
+        // Fiche associée à chaque individu présent dans l’arbre
 struct sFiche{
     tIdentite Identite ; // Acc ès aux informations de l’identit é de la personne
     struct sFiche * pPere ; // Adresse de la fiche du père
@@ -171,7 +171,7 @@ void ArbreEcrireGV(tArbre Arbre, char Fichier[]) {
     fprintf(f, "\trankdir = \"BT\";\n");
 
     // Écriture des styles des nœuds et la couleur pour les hommes
-    fprintf(f, "\n\tnode [shape = box, color = blue, fontname = \"Arial\", fontsize = 10];\n");
+    fprintf(f, "\n\tnode [shape = box, color = red, fontname = \"Arial\", fontsize = 10];\n");
 
     // Parcourir l'arbre pour écrire les nœuds pour les hommes
     struct sFiche* current = Arbre->pPremiere;
@@ -284,7 +284,7 @@ void ArbreAfficherAscendants(tArbre Arbre, int Identifiant) {
 static void EcrireAscendantsGVRecursive(FILE *f, tArbre Arbre, struct sFiche *personne) {
 
     if (IdentiteSexe(personne->Identite)=='M'){
-        fprintf(f, "\n\tnode [color = blue];\n");
+        fprintf(f, "\n\tnode [color = red];\n");
     } else {
         fprintf(f, "\n\tnode [color = green];\n");
     } // Change la couleur d'affichage selon le sexe
