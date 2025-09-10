@@ -6,14 +6,14 @@
 int main(int argc, char * argv[]){
 
     if(argc !=2){
-        fprintf(stderr,"Usage; %s variable, argv[0] \n");
+        fprintf(stderr,"Usage; %s variable\n" ,argv[0]);
         exit(1);
     }
 
     char * valeur;
     valeur = getenv(argv[1]);
     if (valeur ==NULL){
-        fprintf(stderr,"Varible %s inconnue\n");
+        fprintf(stderr,"Varible %s inconnue\n",argv[1]);
         exit(2);
     }
     printf("%s\n");
