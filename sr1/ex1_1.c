@@ -4,6 +4,8 @@
 #include <stdlib.h>                 /* pour le exit */
 
 int main(int argc, char * argv[]){
+   
+   
     /*
     while(a !='\0') {
         printf(a,"%s");

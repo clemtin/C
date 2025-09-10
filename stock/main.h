@@ -4,16 +4,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+typedef struct pomme * tpomme;
+typedef struct palette * tpalette;
+typedef struct buchel * tbuchel;
 
-typedef struct {
-    int id;
-    char nom[50];
-    int quantite;
-    float prix_unitaire;
-}
+
+
+
+
+
 
 extern void init;
-extern void
+
 
 
 
