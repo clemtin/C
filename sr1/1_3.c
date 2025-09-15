@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>                  /* pour print f*/
 #include <stdlib.h>                 /* pour le exit */
-#include <errno.h>                  /* pour erno */
+#include <errno.h>                  /* pour errno */
 
 
 
