@@ -43,5 +43,25 @@ int main(int argc, char* argv[]){
        Nbecrit=write(dest,Bloc,Nblus);
     }
 
+    int exit_status = 0;
+    if (Nblus<0){           /* erreur lecutre */
+        perror(argv[1]);
+        exit_status = 4;
+    }
 
+    if((Nbecrit<0)||(Nbecrit<Nblus)){
+        fprintf(stderr,"PB ecriture !\n");
+    }
+ 
+    else {                  /* ecriture interompue */
+        fprintf(stderr,"Erreur : écriture interrompue dans %s !\n",argv[2]);
+        exit_status = 5;
+    }
+    close(src);     /* fermeture des fichiers */
+
+    if(close(dest)==-1){
+        perror(argv[2]);
+        exit_status = 6;
+    }
+    exit(exit_status);
 }

@@ -3,6 +3,11 @@
 #include <stdio.h>                  /* pour print f*/
 #include <stdlib.h>                 /* pour le exit */
 
+
+
+
+
+
 int main(int argc, char * argv[]){
    
    
