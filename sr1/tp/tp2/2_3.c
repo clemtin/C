@@ -14,7 +14,7 @@
 
 void ecrire_dans_stdout (char nom_fich[]){
     int f;
-    f=open(nom_fich,0,O_RDONLY);
+    f=open(nom_fich,O_RDONLY);
     if(f==-1){
         perror("nom fich");
         exit(2);
@@ -45,14 +45,14 @@ void ecrire_dans_stdout (char nom_fich[]){
 
 void ecrire_sd(char source[],char dest[]){
     int s,d;
-    s=open(source,0,O_RDONLY);
+    s=open(source,O_RDONLY);
 
     if(s==-1){
         perror("s");
         exit(2);
     }
 
-    d=open(dest,O_WRONLY);
+    d=open(dest,O_WRONLY| O_CREAT | O_TRUNC);
 
     if(d==-1){
         perror("d");
@@ -73,7 +73,7 @@ void ecrire_sd(char source[],char dest[]){
         exit(4);
     }
     if(nbecrit == -1){
-        perror("echec read");
+        perror("echec write");
         exit(5);
     }
     close(s);
@@ -84,7 +84,7 @@ void ecrire_sd(char source[],char dest[]){
 void lire_stdin(){
     int a;
     char bloc [TAILLE];
-    while((a=read(STDIN_FILENO,bloc,TAILLE)>0)){
+    while((a=read(STDIN_FILENO,bloc,TAILLE))>0){
         write(STDOUT_FILENO, bloc, a);
     }
     
@@ -96,9 +96,12 @@ int main(int argc,char *argv[]){
     int i;
     int cas=0;
     int a;
-    while(i=1,argv[i]=='\0',i++){
+    int pos;
+    for(i=1;i<argc;i++){
         if(argv[i]=='>'){
-            cas=i;
+            cas=1;
+            pos = i;
+            break;
         }
     }
 
@@ -106,19 +109,23 @@ int main(int argc,char *argv[]){
         lire_stdin();
     }
 
-    if(cas>0){
-        while(i=1,i<cas,i++){
+    if(cas==1){
+        while(i=1,i<pos,i++){
             ecrire_sd(argv[i],argv[cas+1]);
         }
         
     }
 
-    if(cas==0){
-        while(i=1,i<argc,i++){
+    if(cas==0){ 
+        for(i=1;i<argc;i++){
             pid_t pid=fork();
-            if(pid==0){
+            if(pid==0){ /*     FILS     */
                 ecrire_dans_stdout(argv[i]);
+                exit(EXIT_SUCCESS);
             }
         }
+
+       while(wait(NULL)>0);
     }
+    
 }
