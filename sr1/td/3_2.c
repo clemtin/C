@@ -20,11 +20,16 @@ off_t taille =lseek(fd,0,SEEK_END);
 
 */
 
-
 int(Nieme)(int n,int fd){
     int Entier;
+    lseek(fd,(n-1)*sizeof(int),SEEK_SET);
+    read(fd,&Entier,sizeof(int));
 
-
-
-    return Entier;
+    /*
+    off_t position;
+    position = lseek(fd,n*sizeof(int),SEEK_SET);
+    */
+    return Entier; 
 }
+
+

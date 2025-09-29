@@ -12,12 +12,11 @@ int main(int argc, char* argv[]){
         perror("creation de processus");
         exit(1);}
 
-        if(pid){
-            /* bout de code executé par le PERE*/
+    if(pid){
+        execlp("ls","ls","-l",NULL); /* "NOM DU FICH","NOM CMD","NOM ARG","NULL" */
         }
 
-    else{
+    wait(NULL);
+    execlp("DATE","date",NULL);
         /* bout de code executé par le FILS*/
     }
-    exit(0);
-}
