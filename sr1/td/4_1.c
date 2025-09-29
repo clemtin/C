@@ -28,4 +28,5 @@ int main(int argc, char *argv[]){
     printf("%s: \n",argv[1]);
     printf("Ttaille %ld octets\n",Infos.st_size);
     printf("Derniere modification :%s\n",ctime(&Infos.st_mtime));    
+    exit(0);
 }
