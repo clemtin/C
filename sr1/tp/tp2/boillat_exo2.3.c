@@ -48,14 +48,14 @@ void ecrire_sd(char source[],char dest[]){
     s=open(source,O_RDONLY);
 
     if(s==-1){
-        perror("s");
+        perror("open");
         exit(2);
     }
 
     d=open(dest,O_WRONLY| O_CREAT | O_TRUNC);
 
     if(d==-1){
-        perror("d");
+        perror("open 2");
         exit(3);
     }
 
@@ -86,6 +86,8 @@ void lire_stdin(){
     char bloc [TAILLE];
     while((a=read(STDIN_FILENO,bloc,TAILLE))>0){
         write(STDOUT_FILENO, bloc, a);
+        perror("write stdout");
+        exit(5);
     }
     
 
