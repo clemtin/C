@@ -39,12 +39,11 @@ void Affiche_inode(struct stat *Infos) {
 
 int main(int argc, char *argv[]){
     struct stat Infos;
+
     if(argc<2){
         fprintf(stderr,"Usage %s nom fich [...]",argv[0]);
         exit(1);
     }
-
-
 
     if(argc>2){
     
