@@ -45,6 +45,7 @@ int main(int argc, char *argv[]){
         exit(1);
     }
 
+    
     if(argc>2){
     
     for(int a=1;a<argc;a++) {
