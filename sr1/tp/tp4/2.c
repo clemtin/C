@@ -44,29 +44,32 @@ int main(int argc,char *argv[]){
         close(Etat[0]);  /* tube 1 ecriture tube 0 lecture */
         close(Remplir[1]); /* tube 1 ecriture tube 0 lecture */
         int lec;
-        while(lec=(read(Remplir[0],&lec,sizeof(lec)))>0){
-            switch (lec)
-            {
-            case 1:
-                bassin=bassin+lec;
+        int nblus;
+        while((nblus=read(Remplir[0],(void*)&lec,sizeof(lec)))>0){
+            bassin+=lec;
+            switch (lec){
+            case (1):
                 printf("*");
                 fflush(stdout);
-                if(bassin>MAX_BASSIN){
-                    write(Etat[1],&bassin,sizeof(bassin));
+                if(bassin==MAX_BASSIN-1){
+                    if(write(Etat[1],&bassin,sizeof(int))==-1){
+                        perror("echec write bassin");
+                        exit(8);
+                        }
                     }
                 break;
             
             case -1:
                 bassin=0;
                 printf("\n");
-            break;
-            }
-            
-            
+                break;
+            }      
         }
+
         close(Etat[1]);
         close(Remplir[0]);  
         exit(1);
+
       }
 
     else{
@@ -78,30 +81,40 @@ int main(int argc,char *argv[]){
         f_flags |= O_NONBLOCK; /* Positionnement du flag de non blocage */
         fcntl(Etat[0], F_SETFL, f_flags); /* Mis `a jour des flags */
 
+        int p= 1;
         int a = -1;
         int lu;
+        int nblu;
 
+        for(int i=0; i<N; i++){
+            lu=0;
+            usleep(20000);
+            if(write(Remplir[1], &p, sizeof(p))==-1)
+                {
+                    perror("echec write");
+                    exit(6);
+                }
 
-        for(int i=1; i<=N; i++){
-            sleep(1);
-            if(write(Remplir[1], &i, sizeof(i))==-1){
-                perror("echec write");
-            if((lu=read(Etat[0],(void*)&lu,sizeof(lu)))>0)
+            read(Etat[0],(void*)&lu,sizeof(lu));
+            if(lu==MAX_BASSIN-1){
                 if(write(Remplir[1],&a,sizeof(int))==-1){
                     perror("echec de con");
                     exit(5);
                 }
-                exit(6);
+                }
             }
-            if(lu==-1){
-                perror("echec erreur pere");
-            }
-        }
+        
+        close(Etat[0]);
+        close(Remplir[1]);
         int codefils;
         wait(&codefils);
         printf("\n");
         printf("[PERE] : mon fils %d est terminer avec le code %d\n",pid,WEXITSTATUS(codefils));
+        exit(9);
+        }
+
+        
+        return 0;
     }
 
-    return 0;
-}
+    
