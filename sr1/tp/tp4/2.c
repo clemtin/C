@@ -46,9 +46,10 @@ int main(int argc,char *argv[]){
         int lec;
         int nblus;
         while((nblus=read(Remplir[0],(void*)&lec,sizeof(lec)))>0){
-            bassin+=lec;
+            
             switch (lec){
             case (1):
+                bassin+=lec;
                 printf("*");
                 fflush(stdout);
                 if(bassin==MAX_BASSIN-1){
