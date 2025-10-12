@@ -21,10 +21,13 @@ void ecrire_dans_stdout (char nom_fich[]){
 
     char bloc[TAILLE];
     int nbecrit;
+    
     int nblus = read(f,(void *)bloc,TAILLE);
 
     while( nblus > 0 ){
-        nbecrit=write(STDOUT_FILENO,(void*)bloc,nblus);
+        /* write(sortie,entrée,taille)
+        read(entré,)*/
+        nbecrit=write(STDOUT_FILENO,(void*)bloc,sizeof(nblus));
         nblus = read(f,(void *)bloc,TAILLE);
     }
 

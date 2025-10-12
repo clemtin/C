@@ -18,6 +18,9 @@
 
 int main(void){
     int tube[2];
+    /*
+    tube[lecture,ecriture]
+    */
 
     if(pipe(tube)==-1){
         perror("echec creation tube");

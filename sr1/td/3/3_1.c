@@ -39,12 +39,12 @@ int main(int argc, char* argv[]){
     int Nblus=0;
     int Nbecrit=0; 
 
-    while((Nbecrit==Nblus)&&(Nblus=read(src,Bloc,sizeof(Bloc)))>0){
+    while((Nbecrit==Nblus)&&(Nblus=read(src,(void*)Bloc,sizeof(Bloc)))>0){
        Nbecrit=write(dest,Bloc,Nblus);
     }
 
     int exit_status = 0;
-    if (Nblus<0){           /* erreur lecutre */
+    if (Nblus<0){           /* erreur lecture */
         perror(argv[1]);
         exit_status = 4;
     }

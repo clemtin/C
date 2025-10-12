@@ -8,13 +8,14 @@
 int main(int argc, char* argv[]){
 
     id_t pid=fork();
+    /* int pid =fork();*/
     
     if(pid == -1)
     {
         perror("erreur fork");
         exit(1);
     }
-    if(pid){ /* PERE */
+    if(pid){ /* PERE if(pid!=0) */
         int infofils;
         wait(&infofils);
     

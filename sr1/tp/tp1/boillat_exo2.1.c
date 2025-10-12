@@ -14,13 +14,13 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     
-    if(pid==0){ /* pere */
+    if(pid==0){ /* fils */
         execlp("ls","ls","-al",NULL);
         perror("ls");
         exit(1);
     }
     
-    else{ /* fils */
+    else{ /* pere */
         wait(NULL); 
         execlp("date","date",NULL);
         perror("date");

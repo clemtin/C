@@ -12,19 +12,47 @@
 
 #include <dirent.h>
 
+#include <string.h>
+
 #define TAILLE 512
 
-void AffNomFich(char NomRep[]){
+int AffNomFich(char NomRep[]){
     DIR *Repertoire;
+    /*
+    pointeur vers repetoire 
+    deux cas speciaux 
+
+        . == rep courant
+        .. == rep pere 
+    */
     struct dirent *Element;
+    /*
+    d_name
+    d_inode
+    
+    */
     struct stat Infos;
+    /*
+    
+
+
+
+
+
+
+    */
     char Designation[512];
 
     Repertoire=opendir(NomRep);
+    /*
+    
+    */
     if(Repertoire==NULL){
         perror(NomRep);
         return -1;
     }
+
+
                 /* boucle parcours repertoire */
     while((Element=readdir(Repertoire))!=NULL){
         if((strcmp(Element->d_name,".")!=0)&&(strcmp(Element->d_name,".."))){
@@ -42,6 +70,13 @@ void AffNomFich(char NomRep[]){
 
 
     closedir(Repertoire); 
+    
+}
+    return 0;
 }
 
+int main(int argc,char* argv[]){
 
+    AffNomFich("/Users/clem/git_prog/c/sr1/td/4");
+    return 0;
+}

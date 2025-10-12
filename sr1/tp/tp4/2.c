@@ -40,12 +40,15 @@ int main(int argc,char *argv[]){
 
     }
 
-    if(pid==0){
+    if(pid==0){/* FILS*/ 
+        /* O LIT 1 ECRIT */
         close(Etat[0]);  /* tube 1 ecriture tube 0 lecture */
         close(Remplir[1]); /* tube 1 ecriture tube 0 lecture */
+
         int lec;
         int nblus;
-        while((nblus=read(Remplir[0],(void*)&lec,sizeof(lec)))>0){
+
+        while((nblus=read(Remplir[0],(void*)&lec,sizeof(Remplir[0])))>0){
             
             switch (lec){
             case (1):

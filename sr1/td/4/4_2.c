@@ -21,7 +21,7 @@ long TailleRepCour(void){
     struct stat Infos;
 
 
-    Repertoire=opendir(".");
+    Repertoire=opendir(".");/* f=open() */
     if(Repertoire==NULL){
         perror(".");
         return -1;
@@ -39,4 +39,10 @@ long TailleRepCour(void){
     }
     closedir(Repertoire); 
     return taille;
+}
+
+
+int main(){
+    printf("taille repo = %d\n",TailleRepCour);
+    return 0;
 }
