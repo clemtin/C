@@ -60,12 +60,13 @@ void computeExpressions(FILE* input) {
         while (!queue_empty(infix)) {
             Token* t = (Token*) queue_top(infix);
             queue_pop(infix);
-            free(t);
+            delete_token(&t);
         }
         while (!queue_empty(postfix)) {
             Token* t = (Token*) queue_top(postfix);
             queue_pop(postfix);
-            free(t);
+            delete_token(&t);
+            
         }
 
         // Nettoyage
@@ -99,6 +100,7 @@ Queue* stringToTokenQueue(const char* expression){
             Token* to = create_token_from_string(curpos, 1);
             queue_push(q, to);
             curpos++;
+
         } 
 		else {
             const char* deb = curpos;
@@ -110,8 +112,10 @@ Queue* stringToTokenQueue(const char* expression){
 
             Token* to = create_token_from_string(deb, cmp);
             queue_push(q, to);
+
         }
     }
+    
     return q;
 	}
 
@@ -122,67 +126,71 @@ Queue* shuntingYard(Queue* infix) {
 
     while (!queue_empty(infix)) {
         Token* t = (Token*) queue_top(infix);
-        queue_pop(infix); // on avance dans la file infixée
+        queue_pop(infix); // avance dans la file infix
 
-        //  Si c'est un nombre : on le met directement dans la sortie
         if (token_is_number(t)) {
-            queue_push(postfix, t);
+            // créer une copie du token pour la sortie
+            Token* copy = create_token_from_value(token_value(t));
+            queue_push(postfix, copy);
         }
-
-        // Si c'est un opérateur
         else if (token_is_operator(t)) {
             while (!stack_empty(swait)) {
                 Token* top = (Token*) stack_top(swait);
+                stack_pop(swait);
 
-                if (token_is_operator(top) &&
-                    (
-                        (token_operator_priority(top) > token_operator_priority(t)) ||
-                        (token_operator_priority(top) == token_operator_priority(t)
-                         && token_operator_leftAssociative(t))
-                    )
-                ) {
-                    stack_pop(swait);
-                    queue_push(postfix, top);
-                } else {
-                    break;
+                if (token_is_operator(top)) {
+                    char op = token_operator(top);
+                    Token* copyTop = create_token_from_string(&op, 1);
+                    queue_push(postfix, copyTop);
+                } 
+                else if (token_is_parenthesis(top)) {
+                    char c = token_parenthesis(top);
+                    Token* copyTop = create_token_from_string(&c, 1);
+                    queue_push(postfix, copyTop);
                 }
             }
-            stack_push(swait, t);
+            stack_push(swait, t); // pas besoin de copie ici
         }
-
-        //  Si c’est une parenthèse ouvrante "("
         else if (token_is_parenthesis(t) && token_parenthesis(t) == '(') {
             stack_push(swait, t);
         }
-
-        //  Si c’est une parenthèse fermante ")"
         else if (token_is_parenthesis(t) && token_parenthesis(t) == ')') {
             while (!stack_empty(swait)) {
                 Token* top = (Token*) stack_top(swait);
                 if (token_is_parenthesis(top) && token_parenthesis(top) == '(')
                     break;
-                stack_pop(swait);
-                queue_push(postfix, top);
-            }
 
-            // retirer la parenthèse ouvrante
-            if (!stack_empty(swait) && token_is_parenthesis(stack_top(swait)) &&
-                token_parenthesis(stack_top(swait)) == '(') {
                 stack_pop(swait);
+
+                char c = token_parenthesis(top);
+                Token* copyTop = create_token_from_string(&c, 1);
+                queue_push(postfix, copyTop);
             }
+            if (!stack_empty(swait)) stack_pop(swait); // retirer '('
         }
     }
 
-    // À la fin, vider le reste de la pile
+    // vider le reste de la pile
     while (!stack_empty(swait)) {
         Token* top = (Token*) stack_top(swait);
         stack_pop(swait);
-        queue_push(postfix, top);
+
+        if (token_is_operator(top)) {
+            char op = token_operator(top);
+            Token* copyTop = create_token_from_string(&op, 1);
+            queue_push(postfix, copyTop);
+        } else if (token_is_parenthesis(top)) {
+            char c = token_parenthesis(top);
+            Token* copyTop = create_token_from_string(&c, 1);
+            queue_push(postfix, copyTop);
+        }
     }
 
     delete_stack(&swait);
     return postfix;
 }
+
+
 
 Token* evaluateOperator(Token* arg1, Token* op, Token* arg2){
     float a = token_value(arg1);
@@ -247,9 +255,9 @@ float evaluateExpression(Queue* postfix) {
 
             Token* res = evaluateOperator(arg1, t, arg2);
             // free les anciens tokens
-            free(arg1);
-            free(arg2);
-            free(t);
+            delete_token(&arg1);
+            delete_token(&arg2);
+            delete_token(&t);
 
             stack_push(evalStack, res);
 
@@ -260,11 +268,11 @@ float evaluateExpression(Queue* postfix) {
     Token* final = (Token*) stack_top(evalStack);
     float result = token_value(final);
 
-    free(final);
+    delete_token(&final);
 
     delete_stack(&evalStack);
     return result;
-}
+    }
 
 /** Main function for testing.
  * The main function expects one parameter that is the file where expressions to translate are
