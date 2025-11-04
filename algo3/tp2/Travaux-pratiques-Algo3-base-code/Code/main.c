@@ -56,6 +56,18 @@ void computeExpressions(FILE* input) {
         float result = evaluateExpression(postfix);
         printf("Evaluate : %f\n\n", result);
 
+         //  libérer chaque token des files
+        while (!queue_empty(infix)) {
+            Token* t = (Token*) queue_top(infix);
+            queue_pop(infix);
+            free(t);
+        }
+        while (!queue_empty(postfix)) {
+            Token* t = (Token*) queue_top(postfix);
+            queue_pop(postfix);
+            free(t);
+        }
+
         // Nettoyage
         delete_queue(&infix);
         delete_queue(&postfix);
@@ -112,12 +124,12 @@ Queue* shuntingYard(Queue* infix) {
         Token* t = (Token*) queue_top(infix);
         queue_pop(infix); // on avance dans la file infixée
 
-        // 1️⃣ Si c'est un nombre : on le met directement dans la sortie
+        //  Si c'est un nombre : on le met directement dans la sortie
         if (token_is_number(t)) {
             queue_push(postfix, t);
         }
 
-        // 2️⃣ Si c'est un opérateur
+        // Si c'est un opérateur
         else if (token_is_operator(t)) {
             while (!stack_empty(swait)) {
                 Token* top = (Token*) stack_top(swait);
@@ -138,12 +150,12 @@ Queue* shuntingYard(Queue* infix) {
             stack_push(swait, t);
         }
 
-        // 3️⃣ Si c’est une parenthèse ouvrante "("
+        //  Si c’est une parenthèse ouvrante "("
         else if (token_is_parenthesis(t) && token_parenthesis(t) == '(') {
             stack_push(swait, t);
         }
 
-        // 4️⃣ Si c’est une parenthèse fermante ")"
+        //  Si c’est une parenthèse fermante ")"
         else if (token_is_parenthesis(t) && token_parenthesis(t) == ')') {
             while (!stack_empty(swait)) {
                 Token* top = (Token*) stack_top(swait);
@@ -161,7 +173,7 @@ Queue* shuntingYard(Queue* infix) {
         }
     }
 
-    // 5️⃣ À la fin, vider le reste de la pile
+    // À la fin, vider le reste de la pile
     while (!stack_empty(swait)) {
         Token* top = (Token*) stack_top(swait);
         stack_pop(swait);
@@ -202,10 +214,10 @@ Token* evaluateOperator(Token* arg1, Token* op, Token* arg2){
 		break;
 
 	case '^':
-		for(int i=0;i<(int)b;i++)
-			res*=a;
-
-
+		for(int i=0;i<(int)b;i++){
+            res*=a;
+        }
+		break;
 
 	default:
 		fprintf(stderr,"operation inconnue\n");
@@ -227,20 +239,28 @@ float evaluateExpression(Queue* postfix) {
             stack_push(evalStack, t);
         }
         else if (token_is_operator(t)) {
-            // ⚠️ dépiler dans l’ordre inverse
+            // dépiler dans l’ordre inverse
             Token* arg2 = (Token*) stack_top(evalStack);
             stack_pop(evalStack);
             Token* arg1 = (Token*) stack_top(evalStack);
             stack_pop(evalStack);
 
             Token* res = evaluateOperator(arg1, t, arg2);
+            // free les anciens tokens
+            free(arg1);
+            free(arg2);
+            free(t);
+
             stack_push(evalStack, res);
+
         }
     }
 
     // à la fin : un seul élément dans la pile
     Token* final = (Token*) stack_top(evalStack);
     float result = token_value(final);
+
+    free(final);
 
     delete_stack(&evalStack);
     return result;
