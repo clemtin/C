@@ -34,6 +34,9 @@ typedef struct s_SubList{
     struct s_LinkedElement* tail;
 } SubList;
 
+SubList list_mergesort(SubList l, OrderFunctor f);
+SubList list_merge(SubList left, SubList right, OrderFunctor f);
+
 List* list_create(void) {
     // On alloue un seul bloc pour la structure et son sentinelle
     List* l = malloc(sizeof(struct s_List) + sizeof(struct s_LinkedElement));
@@ -215,11 +218,61 @@ void list_delete(ptrList* l) {
 }
 
 List* list_sort(List* l, OrderFunctor f) {
-    (void)f; // pas encore implémenté
+    if (l == NULL || l->size <= 1) 
+        return l;
+
+    /* -----------------------------
+       1. Transformer List -> SubList
+       ----------------------------- */
+    SubList s;
+
+    // head est le premier vrai élément
+    s.head = l->sentinel->next;
+    // tail est le dernier vrai élément
+    s.tail = l->sentinel->previous;
+
+    // On coupe la sentinelle pour avoir une vraie liste linéaire
+    s.head->previous = NULL;
+    s.tail->next = NULL;
+
+    /* -----------------------------
+       2. Tri mergesort
+       ----------------------------- */
+    s = list_mergesort(s, f);
+
+    /* -----------------------------
+       3. Reconnecter avec sentinelle
+       ----------------------------- */
+    if (s.head == NULL) {
+        // Liste vide
+        l->sentinel->next = l->sentinel;
+        l->sentinel->previous = l->sentinel;
+        l->size = 0;
+        return l;
+    }
+
+    // reconnect head <-> sentinel
+    l->sentinel->next = s.head;
+    s.head->previous = l->sentinel;
+
+    // reconnect tail <-> sentinel
+    l->sentinel->previous = s.tail;
+    s.tail->next = l->sentinel;
+
+    /* -----------------------------
+       4. Recalculer la taille
+       ----------------------------- */
+    int count = 0;
+    LinkedElement* cur = s.head;
+    while (cur != l->sentinel) {
+        count++;
+        cur = cur->next;
+    }
+    l->size = count;
+
     return l;
 }
-
-
+    
 SubList list_split(SubList l){
 	if(!l.head || l.tail == l.head)
 		return l;
@@ -252,18 +305,94 @@ SubList list_merge(SubList leftlist, SubList rightlist, OrderFunctor f){
 
 	
 	while (left !=NULL && right != NULL){
+		LinkedElement* next;
+
 		if(f(left->value,right->value)){
 			// cas left 
+			next = left;
+            left = left->next;
+        } else {
+            // cas right
+            next = right;
+            right = right->next;
+        }
+
+        // Premier élément 
+        if (result_head == NULL) {
+            result_head = next;
+            result_tail = next;
+            next->previous = NULL;
+        }
+        // Ajout à la fin de la nouvelle liste
+        else {
+            result_tail->next = next;
+            next->previous = result_tail;
+            result_tail = next;
+        }
+    }
+
+    /* Il reste des éléments dans */
+    LinkedElement* remaining = (left != NULL) ? left : right;
+
+    while (remaining != NULL) {
+        if (result_head == NULL) {
+            result_head = remaining;
+            result_tail = remaining;
+            remaining->previous = NULL;
+        } else {
+            result_tail->next = remaining;
+            remaining->previous = result_tail;
+            result_tail = remaining;
+        }
+        remaining = remaining->next;
+    }
+
+    /* Terminer proprement */
+    result_tail->next = NULL;
+
+    newS.head = result_head;
+    newS.tail = result_tail;
+
+    return newS;
+}
+
+SubList list_mergesort(SubList l, OrderFunctor f)
+{
+    // liste vide ou 1 élément 
+    if (l.head == NULL || l.head->next == NULL) {
+        return l;
+    }
 
 
-		}
+    SubList left, right;
+    left.head = l.head;
 
-		else{
 
-			// cas right
-		}
-	}
-	
-	
+    LinkedElement* slow = l.head;
+    LinkedElement* fast = l.head->next;
 
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    // Découpage
+    right.head = slow->next;
+    right.head->previous = NULL;
+    slow->next = NULL;
+
+    // Fixer les tails
+    left.tail = slow;
+
+    // Recalculer le tail droit
+    LinkedElement* tmp = right.head;
+    while (tmp->next != NULL) tmp = tmp->next;
+    right.tail = tmp;
+
+    /* --- Étape 2 : appels récursifs --- */
+    left  = list_mergesort(left, f);
+    right = list_mergesort(right, f);
+
+    /* --- Étape 3 : fusionner --- */
+    return list_merge(left, right, f);
 }
